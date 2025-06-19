@@ -8,8 +8,9 @@ import AihubmixPage from './AihubmixPage'
 import DmxapiPage from './DmxapiPage'
 import SiliconPage from './SiliconPage'
 import TokenFluxPage from './TokenFluxPage'
+import WXAIPage from './WXAIPage'
 
-const Options = ['aihubmix', 'silicon', 'dmxapi', 'tokenflux']
+const Options = ['aihubmix', 'silicon', 'dmxapi', 'tokenflux', 'wxai']
 
 const PaintingsRoutePage: FC = () => {
   const params = useParams()
@@ -30,6 +31,7 @@ const PaintingsRoutePage: FC = () => {
       <Route path="/silicon" element={<SiliconPage Options={Options} />} />
       <Route path="/dmxapi" element={<DmxapiPage Options={Options} />} />
       <Route path="/tokenflux" element={<TokenFluxPage Options={Options} />} />
+      <Route path="/wxai" element={<WXAIPage Options={Options} />} />
     </Routes>
   )
 }

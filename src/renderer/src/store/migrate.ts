@@ -1608,6 +1608,18 @@ const migrateConfig = {
     } catch (error) {
       return state
     }
+  },
+  '115': (state: RootState) => {
+    try {
+      addProvider(state, 'wxai')
+      state.llm.providers = moveProvider(state.llm.providers, 'wxai', 16)
+      if (state.paintings && !state.paintings.wxaiPaintings) {
+        state.paintings.wxaiPaintings = []
+      }
+      return state
+    } catch (error) {
+      return state
+    }
   }
 }
 

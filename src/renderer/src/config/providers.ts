@@ -632,6 +632,17 @@ export const PROVIDER_CONFIG = {
       models: `${TOKENFLUX_HOST}/models`
     }
   },
+  wxai: {
+    api: {
+      url: 'https://cs.rhwx-ai.com/openapi'
+    },
+    websites: {
+      official: 'https://cs.rhwx-ai.com',
+      apiKey: 'https://cs.rhwx-ai.com/dashboard/api-keys',
+      docs: 'https://cs.rhwx-ai.com/docs',
+      models: 'https://cs.rhwx-ai.com/models'
+    }
+  },
   cephalon: {
     api: {
       url: 'https://cephalon.cloud/user-center/v1/model'

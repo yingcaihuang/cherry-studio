@@ -201,7 +201,7 @@ export type PaintingParams = {
   files: FileType[]
 }
 
-export type PaintingProvider = 'aihubmix' | 'silicon' | 'dmxapi'
+export type PaintingProvider = 'aihubmix' | 'silicon' | 'dmxapi' | 'tokenflux' | 'wxai'
 
 export interface Painting extends PaintingParams {
   model?: string
@@ -297,8 +297,16 @@ export interface TokenFluxPainting extends PaintingParams {
   status?: 'starting' | 'processing' | 'succeeded' | 'failed' | 'cancelled'
 }
 
+export interface WXAIPainting extends PaintingParams {
+  generationId?: string
+  model?: string
+  prompt?: string
+  inputParams?: Record<string, any>
+  status?: 'starting' | 'processing' | 'succeeded' | 'failed' | 'cancelled'
+}
+
 export type PaintingAction = Partial<
-  GeneratePainting & RemixPainting & EditPainting & ScalePainting & DmxapiPainting & TokenFluxPainting
+  GeneratePainting & RemixPainting & EditPainting & ScalePainting & DmxapiPainting & TokenFluxPainting & WXAIPainting
 > &
   PaintingParams
 
@@ -310,6 +318,7 @@ export interface PaintingsState {
   upscale: Partial<ScalePainting> & PaintingParams[]
   DMXAPIPaintings: DmxapiPainting[]
   tokenFluxPaintings: TokenFluxPainting[]
+  wxaiPaintings: WXAIPainting[]
 }
 
 export type MinAppType = {

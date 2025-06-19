@@ -135,6 +135,16 @@ export const INITIAL_PROVIDERS: Provider[] = [
     enabled: false
   },
   {
+    id: 'wxai',
+    name: '万象AI',
+    type: 'openai',
+    apiKey: '',
+    apiHost: 'https://cs.rhwx-ai.com/openapi',
+    models: SYSTEM_MODELS.wxai,
+    isSystem: true,
+    enabled: false
+  },
+  {
     id: '302ai',
     name: '302.AI',
     type: 'openai',

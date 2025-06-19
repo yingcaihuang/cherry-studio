@@ -2197,6 +2197,44 @@ export const SYSTEM_MODELS: Record<string, Model[]> = {
       group: 'Qwen'
     }
   ],
+  wxai: [
+    {
+      id: 'gpt-4o',
+      provider: 'wxai',
+      name: 'GPT-4o',
+      group: 'GPT-4'
+    },
+    {
+      id: 'gpt-4o-mini',
+      provider: 'wxai',
+      name: 'GPT-4o Mini',
+      group: 'GPT-4'
+    },
+    {
+      id: 'claude-3-5-sonnet-20241022',
+      provider: 'wxai',
+      name: 'Claude 3.5 Sonnet',
+      group: 'Claude'
+    },
+    {
+      id: 'deepseek-chat',
+      provider: 'wxai',
+      name: 'DeepSeek Chat',
+      group: 'DeepSeek'
+    },
+    {
+      id: 'qwen-max',
+      provider: 'wxai',
+      name: 'Qwen Max',
+      group: 'Qwen'
+    },
+    {
+      id: 'gemini-1.5-pro',
+      provider: 'wxai',
+      name: 'Gemini 1.5 Pro',
+      group: 'Gemini'
+    }
+  ],
   cephalon: [
     {
       id: 'DeepSeek-R1',

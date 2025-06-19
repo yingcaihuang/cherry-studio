@@ -133,21 +133,20 @@ export class WXAIService {
 
         const blob = await response.blob()
         const arrayBuffer = await blob.arrayBuffer()
-        const buffer = Buffer.from(arrayBuffer)
+        const buffer = new Uint8Array(arrayBuffer)
 
         const fileName = `wxai_${Date.now()}_${Math.random().toString(36).substring(7)}.png`
         const filePath = await window.api.file.save(fileName, buffer)
 
         if (filePath) {
-          const fileStats = await window.api.file.getStats(filePath)
           const file: FileType = {
             id: `wxai_${Date.now()}_${Math.random().toString(36).substring(7)}`,
             name: fileName,
             origin_name: fileName,
             path: filePath,
-            size: fileStats?.size || buffer.length,
+            size: buffer.length,
             ext: 'png',
-            type: 'image',
+            type: 'image' as any,
             created_at: new Date().toISOString(),
             count: 0
           }

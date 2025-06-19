@@ -3,24 +3,19 @@ import { Navbar, NavbarCenter, NavbarRight } from '@renderer/components/app/Navb
 import Scrollbar from '@renderer/components/Scrollbar'
 import TranslateButton from '@renderer/components/TranslateButton'
 import { isMac } from '@renderer/config/constant'
-import { getProviderLogo } from '@renderer/config/providers'
 import { usePaintings } from '@renderer/hooks/usePaintings'
 import { useAllProviders } from '@renderer/hooks/useProvider'
 import { useRuntime } from '@renderer/hooks/useRuntime'
-import { useSettings } from '@renderer/hooks/useSettings'
 import FileManager from '@renderer/services/FileManager'
-import { translateText } from '@renderer/services/TranslateService'
 import { useAppDispatch } from '@renderer/store'
 import { setGenerating } from '@renderer/store/runtime'
 import type { WXAIPainting } from '@renderer/types'
 import { getErrorMessage, uuid } from '@renderer/utils'
-import { Avatar, Button, Select, Tooltip } from 'antd'
+import { Button, Select } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
-import { Info } from 'lucide-react'
 import type { FC } from 'react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useLocation, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import SendMessageButton from '../home/Inputbar/SendMessageButton'
@@ -99,12 +94,11 @@ const WXAIPage: FC<Props> = ({ Options }) => {
   const [models, setModels] = useState<WXAIModel[]>([])
   const [selectedModel, setSelectedModel] = useState<WXAIModel | null>(null)
   const [formData, setFormData] = useState<Record<string, any>>({})
-  const [isTranslating, setIsTranslating] = useState(false)
 
   const { t, i18n } = useTranslation()
   const providers = useAllProviders()
   const { addPainting, removePainting, updatePainting, persistentData } = usePaintings()
-  const wxaiPaintings = useMemo(() => persistentData.wxaiPaintings || [], [persistentData.wxaiPaintings])
+  const wxaiPaintings = useMemo(() => (persistentData as any).wxaiPaintings || [], [(persistentData as any).wxaiPaintings])
   const [painting, setPainting] = useState<WXAIPainting>(
     wxaiPaintings[0] || { ...DEFAULT_WXAI_PAINTING, id: uuid() }
   )
@@ -119,10 +113,7 @@ const WXAIPage: FC<Props> = ({ Options }) => {
 
   const dispatch = useAppDispatch()
   const { generating } = useRuntime()
-  const navigate = useNavigate()
-  const location = useLocation()
-  const { autoTranslateWithSpace } = useSettings()
-  const spaceClickTimer = useRef<NodeJS.Timeout>(null)
+  const spaceClickTimer = useRef<any>(null)
   const wxaiProvider = providers.find((p) => p.id === 'wxai')!
   const textareaRef = useRef<any>(null)
   const wxaiService = useMemo(
@@ -180,7 +171,7 @@ const WXAIPage: FC<Props> = ({ Options }) => {
   }
 
   const onDeletePainting = (paintingToDelete: WXAIPainting) => {
-    removePainting('wxaiPaintings', paintingToDelete.id)
+    removePainting('wxaiPaintings' as any, paintingToDelete.id)
     if (painting.id === paintingToDelete.id && wxaiPaintings.length > 1) {
       const remainingPaintings = wxaiPaintings.filter(p => p.id !== paintingToDelete.id)
       setPainting(remainingPaintings[0])
@@ -323,14 +314,23 @@ const WXAIPage: FC<Props> = ({ Options }) => {
               <DynamicFormRender
                 schema={selectedModel.input_schema}
                 formData={formData}
-                onChange={setFormData}
+                onChange={(field: string, value: any) => {
+                  setFormData(prev => ({ ...prev, [field]: value }))
+                }}
                 readI18nContext={readI18nContext}
               />
             )}
           </SettingsContainer>
 
           <Scrollbar style={{ flex: 1 }}>
-            <Artboard painting={painting} />
+            <Artboard
+              painting={painting}
+              isLoading={isLoading}
+              currentImageIndex={0}
+              onPrevImage={() => {}}
+              onNextImage={() => {}}
+              onCancel={() => {}}
+            />
           </Scrollbar>
 
           <InputContainer>
@@ -341,7 +341,7 @@ const WXAIPage: FC<Props> = ({ Options }) => {
               value={painting.prompt || ''}
               spellCheck={false}
               onChange={(e) => updatePaintingState({ prompt: e.target.value })}
-              placeholder={isTranslating ? t('paintings.translating') : t('paintings.prompt_placeholder')}
+              placeholder={t('paintings.prompt_placeholder')}
               onKeyDown={handleKeyDown}
             />
             <Toolbar>
@@ -349,8 +349,8 @@ const WXAIPage: FC<Props> = ({ Options }) => {
                 <TranslateButton
                   text={textareaRef.current?.resizableTextArea?.textArea?.value}
                   onTranslated={(translatedText) => updatePaintingState({ prompt: translatedText })}
-                  disabled={isLoading || isTranslating}
-                  isLoading={isTranslating}
+                  disabled={isLoading}
+                  isLoading={false}
                   style={{ marginRight: 6, borderRadius: '50%' }}
                 />
                 <SendMessageButton sendMessage={onGenerate} disabled={isLoading} />

@@ -634,7 +634,7 @@ export const PROVIDER_CONFIG = {
   },
   wxai: {
     api: {
-      url: 'https://cs.rhwx-ai.com/openapi'
+      url: 'https://cs.rhwx-ai.com/openapi/'
     },
     websites: {
       official: 'https://cs.rhwx-ai.com',

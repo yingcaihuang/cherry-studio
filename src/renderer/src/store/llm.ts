@@ -139,7 +139,7 @@ export const INITIAL_PROVIDERS: Provider[] = [
     name: '万象AI',
     type: 'openai',
     apiKey: '',
-    apiHost: 'https://cs.rhwx-ai.com/openapi',
+    apiHost: 'https://cs.rhwx-ai.com/openapi/',
     models: SYSTEM_MODELS.wxai,
     isSystem: true,
     enabled: false

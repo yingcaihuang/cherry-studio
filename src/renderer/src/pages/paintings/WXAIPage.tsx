@@ -95,13 +95,14 @@ const WXAIPage: FC<Props> = ({ Options }) => {
   const [selectedModel, setSelectedModel] = useState<WXAIModel | null>(null)
   const [formData, setFormData] = useState<Record<string, any>>({})
 
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const providers = useAllProviders()
   const { addPainting, removePainting, updatePainting, persistentData } = usePaintings()
-  const wxaiPaintings = useMemo(() => (persistentData as any).wxaiPaintings || [], [(persistentData as any).wxaiPaintings])
-  const [painting, setPainting] = useState<WXAIPainting>(
-    wxaiPaintings[0] || { ...DEFAULT_WXAI_PAINTING, id: uuid() }
+  const wxaiPaintings = useMemo(
+    () => (persistentData as any).wxaiPaintings || [],
+    [(persistentData as any).wxaiPaintings]
   )
+  const [painting, setPainting] = useState<WXAIPainting>(wxaiPaintings[0] || { ...DEFAULT_WXAI_PAINTING, id: uuid() })
 
   const providerOptions = Options.map((option) => {
     const provider = providers.find((p) => p.id === option)
@@ -116,10 +117,7 @@ const WXAIPage: FC<Props> = ({ Options }) => {
   const spaceClickTimer = useRef<any>(null)
   const wxaiProvider = providers.find((p) => p.id === 'wxai')!
   const textareaRef = useRef<any>(null)
-  const wxaiService = useMemo(
-    () => new WXAIService(wxaiProvider.apiHost, wxaiProvider.apiKey),
-    [wxaiProvider]
-  )
+  const wxaiService = useMemo(() => new WXAIService(wxaiProvider.apiHost, wxaiProvider.apiKey), [wxaiProvider])
 
   useEffect(() => {
     wxaiService.fetchModels().then((models) => {
@@ -171,9 +169,9 @@ const WXAIPage: FC<Props> = ({ Options }) => {
   }
 
   const onDeletePainting = (paintingToDelete: WXAIPainting) => {
-    removePainting('wxaiPaintings' as any, paintingToDelete.id)
+    removePainting('wxaiPaintings' as any, paintingToDelete as any)
     if (painting.id === paintingToDelete.id && wxaiPaintings.length > 1) {
-      const remainingPaintings = wxaiPaintings.filter(p => p.id !== paintingToDelete.id)
+      const remainingPaintings = wxaiPaintings.filter((p) => p.id !== paintingToDelete.id)
       setPainting(remainingPaintings[0])
     }
   }
@@ -235,11 +233,6 @@ const WXAIPage: FC<Props> = ({ Options }) => {
     }
   }
 
-  const readI18nContext = (property: Record<string, any>, key: string): string => {
-    const lang = i18n.language.split('-')[0]
-    return property[`${key}_${lang}`] || property[key]
-  }
-
   useEffect(() => {
     if (wxaiPaintings.length === 0) {
       const newPainting = getNewPainting()
@@ -289,20 +282,18 @@ const WXAIPage: FC<Props> = ({ Options }) => {
 
             {selectedModel && (
               <div style={{ marginBottom: 16 }}>
-                <div style={{ marginBottom: 8, fontSize: 14, fontWeight: 600 }}>
-                  {t('paintings.model')}
-                </div>
+                <div style={{ marginBottom: 8, fontSize: 14, fontWeight: 600 }}>{t('paintings.model')}</div>
                 <Select
                   style={{ width: '100%' }}
                   value={selectedModel.id}
                   onChange={(value) => {
-                    const model = models.find(m => m.id === value)
+                    const model = models.find((m) => m.id === value)
                     if (model) {
                       setSelectedModel(model)
                       updatePaintingState({ model: model.id })
                     }
                   }}
-                  options={models.map(model => ({
+                  options={models.map((model) => ({
                     label: model.name,
                     value: model.id
                   }))}
@@ -310,15 +301,22 @@ const WXAIPage: FC<Props> = ({ Options }) => {
               </div>
             )}
 
-            {selectedModel && selectedModel.input_schema && (
-              <DynamicFormRender
-                schema={selectedModel.input_schema}
-                formData={formData}
-                onChange={(field: string, value: any) => {
-                  setFormData(prev => ({ ...prev, [field]: value }))
-                }}
-                readI18nContext={readI18nContext}
-              />
+            {selectedModel && selectedModel.input_schema && selectedModel.input_schema.properties && (
+              <div>
+                {Object.entries(selectedModel.input_schema.properties).map(([propertyName, schemaProperty]) => (
+                  <div key={propertyName} style={{ marginBottom: 16 }}>
+                    <div style={{ marginBottom: 8, fontSize: 14, fontWeight: 600 }}>{propertyName}</div>
+                    <DynamicFormRender
+                      schemaProperty={schemaProperty}
+                      propertyName={propertyName}
+                      value={formData[propertyName]}
+                      onChange={(field: string, value: any) => {
+                        setFormData((prev) => ({ ...prev, [field]: value }))
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
             )}
           </SettingsContainer>
 
